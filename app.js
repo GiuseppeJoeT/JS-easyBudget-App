@@ -1,4 +1,6 @@
-// BUDGET CONTROLLER
+// easyBudget Application
+
+// BUDGET CONTROLLER (Data controller)
 var budgetController = (function() {
 // When the JavaScript runtime hits this line here, the IIFE gets executed
 // and this anonymous function is declared and immediately invoked
@@ -6,12 +8,72 @@ var budgetController = (function() {
     // an IIFE allows us to have data privacy because it creates a new scope
     // that is not visible from the outside scope.
 
+    // Expense Constructor
+    var Expense = function(id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    // Income Constructor
+    var Income = function(id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var data = {
+        allItems: {
+            exp: [],
+            inc: []
+        },
+        totals: {
+            exp: 0,
+            inc: 0
+        }
+    };
+
+    return {
+        // Adding a new item to the Budget Controller, so to store the information in the data object
+        addItem: function(type, des, val) {
+            var newItem, ID;
+
+            // [1 2 3 5 8], next ID = 9
+            // ID = last ID + 1
+
+            // Create new item ID
+            if (data.allItems[type].length > 0) {
+                ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+            } else {
+                ID = 0;
+            }
+         
+
+            // Create new item based on 'inc' or 'exp' type
+            if (type === 'exp' ) {
+                newItem = new Expense(ID, des, val);
+            } else if (type === 'inc') {
+                newItem = new Income(ID, des, val);
+            }
+
+            // push it into our data structure
+            data.allItems[type].push(newItem);
+
+            // Return the new element 
+            return newItem;
+        },
+
+        testing: function() {
+            console.log(data);
+        }
+    };
+
 
 })();
 
 // UI CONTROLLER
 var UIController = (function() {
-    // private
+  
     var DOMstrings = {
         inputType: '.add__type',
         inputDescription: '.add__description',
@@ -19,7 +81,6 @@ var UIController = (function() {
         inputBtn: '.add__btn'
     }
 
-    // public
     return { 
         getInputValue : function() {
             return {
@@ -40,14 +101,33 @@ var UIController = (function() {
 // GLOBAL APP CONTROLLER
 var controller = (function(budgetCtrl, UICtrl) {
 
-    var DOM = UICtrl.getDOMstrings();
+    var setupEventListeners = function() {
+        
+        var DOM = UICtrl.getDOMstrings();
+
+        // in this case the ctrlAddItem argument is a CALLBACK, so it does not needs parenthesis
+        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
+
+        // set up and EventListener for a keypress event (ENTER button)
+        document.addEventListener('keypress', function(event) {
+            // log the key button pressed
+            // console.log(event); 
+
+            if (event.keyCode === 13 || event.which === 13) {
+                ctrlAddItem();
+            }
+        });
+    };
 
     var ctrlAddItem = function() {
+        var input, newItem;
+
         // 1. Get the field input data
-        var inputData = UICtrl.getInputValue();
-        console.log(inputData);
+        input = UICtrl.getInputValue();
+        //  console.log(input);
 
         // 2. Add the item to the budget controller
+        newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
         // 3. Add the item to the UI
 
@@ -55,24 +135,16 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         // 5. Display the budget on the UI
         
-    }
+    };
 
-    // in this case the ctrlAddItem function is a CALLBACK, so it does not needs parenthesis
-    document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
-
-    // set up Event listeners for keypress events
-    document.addEventListener('keypress', function(event) {
-        
-        // log the key button pressed
-        // console.log(event); 
-
-        if (event.keyCode === 13 || event.which === 13) {
-            ctrlAddItem();
+    return {
+        init: function() {
+            console.log('The easyBudget Application has started');
+            setupEventListeners();
         }
-
-    });
+    }    
 
 })(budgetController, UIController);
 
 
-// how to use the Event object
+controller.init();
