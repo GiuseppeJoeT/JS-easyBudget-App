@@ -8,3 +8,5 @@ EasyBudget is a very simple JavaScript web application that allows you to track 
 - your friend birthday presents budget,
 - your vacation budget,
 - etc.
+
+[To test the easyBudget App please click here!](https://giuseppetiberi.github.io/JS-easyBudget-App/)
