@@ -114,6 +114,23 @@ var UIController = (function() {
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
+        clearFields: function() {
+            var fields, fieldsArray;
+
+            // the .querySelectorAll() method returns a NodeList, epresenting a list of the document's elements that match the specified group of selectors.
+            fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
+
+            // transform the List in Array using the call() method, which allows for a function/method belonging to one object to be assigned and called for a different object.
+            fieldsArray = Array.prototype.slice.call(fields);
+
+            fieldsArray.forEach(function(current, index, array) {
+                // to clear the descriptio and input values
+                current.value = "";
+            });
+
+            fieldsArray[0].focus();
+        },
+
         getDOMstrings: function() {
             return DOMstrings;
         }
@@ -154,6 +171,9 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         // 3. Add the item to the UI
         UICtrl.addListitem(newItem, input.type);
+
+        // 3b. Clear the fields
+        UICtrl.clearFields();
 
         // 4. Calculate the budget
 
