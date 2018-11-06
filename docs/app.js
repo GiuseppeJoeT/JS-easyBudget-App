@@ -43,7 +43,7 @@ var budgetController = (function() {
 
             // Create new item ID
             if (data.allItems[type].length > 0) {
-                // set last added item ID   
+                // set last added item ID, [... - 1 ] because arrays index started to 0   
                 ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
             } else {
                 // set first added item ID 
@@ -94,7 +94,9 @@ var UIController = (function() {
         },
 
         addListitem: function(obj, type) {
+            
             var html, newHtml, element;
+
             // Create HTML string with placeholder text
             if (type === 'inc') {
                 element = DOMstrings.incomeContainer;
@@ -120,7 +122,7 @@ var UIController = (function() {
             // the .querySelectorAll() method returns a NodeList, epresenting a list of the document's elements that match the specified group of selectors.
             fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
 
-            // transform the List in Array using the call() method, which allows for a function/method belonging to one object to be assigned and called for a different object.
+            // transform a List in Array using the call() method, which allows for a function/method belonging to one object to be assigned and called for a different object.
             fieldsArray = Array.prototype.slice.call(fields);
 
             fieldsArray.forEach(function(current, index, array) {
@@ -174,18 +176,22 @@ var controller = (function(budgetCtrl, UICtrl) {
         input = UICtrl.getInputValue();
         //  console.log(input);
 
-        // 2. Add the item to the budget controller
-        newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+        if (input.description !== "" && !isNaN(input.value) && input.value > 0 ) {
 
-        // 3. Add the item to the UI
-        UICtrl.addListitem(newItem, input.type);
+            // 2. Add the item to the budget controller
+            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
-        // 3b. Clear the fields
-        UICtrl.clearFields();
+            // 3. Add the item to the UI
+            UICtrl.addListitem(newItem, input.type);
 
-        // 4. Calculate and update the budget
-        updateBudget();
-        
+            // 4. Clear the fields
+            UICtrl.clearFields();
+
+            // 5. Calculate and update the budget
+            updateBudget();
+        } else {
+            window.alert('Please fill the "Add Description" and "Value" fields properly!');
+        }
     };
 
     return {
