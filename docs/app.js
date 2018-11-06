@@ -179,9 +179,9 @@ var UIController = (function() {
             fieldsArray[0].focus();
         },
 
-        displayBudget: function(obj) {
-            // is coming
-        },
+        // displayBudget: function(obj) {
+        //     // is coming
+        // },
 
         getDOMstrings: function() {
             return DOMstrings;
