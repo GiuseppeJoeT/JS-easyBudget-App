@@ -22,6 +22,19 @@ var budgetController = (function() {
         this.value = value;
     };
 
+    // Updating the budget
+    var calculateTotal = function(type) {
+        var sum = 0;
+        data.allItems[type].forEach(function(current) {
+            sum = sum + current.value;
+        });
+        /* [300, 100, 500]
+           sum = 0 + 300
+            sum = 300 + 100
+             sum = 400 + 500 */
+        data.totals[type] = sum;
+    };
+
     var data = {
         allItems: {
             exp: [],
@@ -30,7 +43,10 @@ var budgetController = (function() {
         totals: {
             exp: 0,
             inc: 0
-        }
+        },
+        budget: 0,
+        // if there are no budget values and no total expenses the percentage values is -1, so it does not exist
+        percentage: -1
     };
 
     return {
@@ -62,6 +78,32 @@ var budgetController = (function() {
 
             // Return the new element 
             return newItem;
+        },
+
+        calculateBudget: function() {
+            // calculate total income and expenses
+            calculateTotal('exp');
+            calculateTotal('inc');
+
+            // Calculate the budget: income - expenses
+            data.budget = data.totals.inc - data.totals.exp;
+
+            // Calculate the percentage of income that we spent
+            if (data.totals.inc > 0) {
+                // EX: Inc: 300; Exp: 100; -> 100/300 = 0.3333 * 100 = 33% 
+                data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+            } else {
+                data.percentage = -1;
+            }
+        },
+
+        getBudget: function() {
+            return {
+                budget: data.budget,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp,
+                percentage: data.percentage
+            }
         },
 
         testing: function() {
@@ -119,14 +161,14 @@ var UIController = (function() {
         clearFields: function() {
             var fields, fieldsArray;
 
-            // the .querySelectorAll() method returns a NodeList, epresenting a list of the document's elements that match the specified group of selectors.
+            // the .querySelectorAll() method returns a NodeList, representing a list of the document's elements that match the specified group of selectors.
             fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
 
             // transform a List in Array using the call() method, which allows for a function/method belonging to one object to be assigned and called for a different object.
             fieldsArray = Array.prototype.slice.call(fields);
 
             fieldsArray.forEach(function(current, index, array) {
-                // to clear the descriptio and input values
+                // to clear the description and input values
                 current.value = "";
             });
 
@@ -163,11 +205,14 @@ var controller = (function(budgetCtrl, UICtrl) {
 
     var updateBudget = function() {
         // 1. Calculate the budget
+        budgetCtrl.calculateBudget();
 
         // 2. Return the budget
+        var budget = budgetCtrl.getBudget();
 
         // 3. Display the budget on the UI
-    }
+        console.log(budget);
+    };
 
     var ctrlAddItem = function() {
         var input, newItem;
