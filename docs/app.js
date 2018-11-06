@@ -180,8 +180,8 @@ var UIController = (function() {
         },
 
         displayBudget: function(obj) {
-
-        }
+            // is coming
+        },
 
         getDOMstrings: function() {
             return DOMstrings;
