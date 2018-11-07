@@ -179,9 +179,19 @@ var UIController = (function() {
             fieldsArray[0].focus();
         },
 
-        // displayBudget: function(obj) {
-        //     // is coming
-        // },
+        displayBudget: function(obj) {
+            
+            document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+            document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
+            document.querySelector(DOMstrings.expensesLabel).textContent = obj.totalExp;
+
+            if (obj.percentage > 0) {
+                document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage + '%';
+            } else {
+                document.querySelector(DOMstrings.percentageLabel).textContent = '---';
+            }
+            
+        },
 
         getDOMstrings: function() {
             return DOMstrings;
@@ -219,7 +229,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         var budget = budgetCtrl.getBudget();
 
         // 3. Display the budget on the UI
-        console.log(budget);
+        UICtrl.displayBudget(budget);
     };
 
     var ctrlAddItem = function() {
@@ -250,6 +260,12 @@ var controller = (function(budgetCtrl, UICtrl) {
     return {
         init: function() {
             console.log('The easyBudget Application has started');
+            UICtrl.displayBudget({
+                budget: 0,
+                totalInc: 0,
+                totalExp: 0,
+                percentage: -1
+            });
             setupEventListeners();
         }
     }    
