@@ -127,7 +127,8 @@ var UIController = (function() {
         budgetLabel: '.budget__value',
         incomeLabel: '.budget__income--value',
         expensesLabel: '.budget__expenses--value',
-        percentageLabel: '.budget__expenses--percentage'
+        percentageLabel: '.budget__expenses--percentage',
+        container: '.container'
     }
 
     return { 
@@ -219,6 +220,8 @@ var controller = (function(budgetCtrl, UICtrl) {
                 ctrlAddItem();
             }
         });
+
+        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
     };
 
     var updateBudget = function() {
@@ -254,6 +257,25 @@ var controller = (function(budgetCtrl, UICtrl) {
             updateBudget();
         } else {
             window.alert('Please fill the "Add Description" and "Value" fields properly!');
+        }
+    };
+
+    var ctrlDeleteItem = function(event) {
+        // we need this event parameter because we wanna know what is the target element that bubbles up and create the Event Delegation
+       var itemID, splitID, type, ID;
+       
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+        if (itemID) {
+
+            // inc-1
+            splitID = itemID.split('-');
+            type = splitID[0];
+            ID = splitID[1];
+
+            // 1. delete the item from the data structure (BudgetController)
+            // 2. delete the item from the UI
+            // 3. Update and show the new budget
         }
     };
 
