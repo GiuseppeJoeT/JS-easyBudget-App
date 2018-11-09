@@ -80,6 +80,28 @@ var budgetController = (function() {
             return newItem;
         },
 
+        deleteItem: function(type, id) {
+            var ids, index;
+            // Eg: remove id = 6
+            // data.allItems[type][id];
+            // ids = [1 2 4 6 8] ---> maps returns the update type (inc or exp) array
+            // index = 3
+
+            // map() returns a brand new array of elements
+            ids = data.allItems[type].map(function(current) {
+                return current.id;
+            });
+
+            // The indexOf() method returns the first index at which a given element can be found in the array, or -1 if it is not present.
+            index = ids.indexOf(id);
+
+            if (index !== -1) {
+                // .splice(element, quantity) removes or adds element from array
+                data.allItems[type].splice(index, 1);
+            }
+
+        },
+
         calculateBudget: function() {
             // calculate total income and expenses
             calculateTotal('exp');
@@ -263,18 +285,22 @@ var controller = (function(budgetCtrl, UICtrl) {
     var ctrlDeleteItem = function(event) {
         // we need this event parameter because we wanna know what is the target element that bubbles up and create the Event Delegation
        var itemID, splitID, type, ID;
-       
+        
+        // event.target: A reference to the object that dispatched the event
         itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if (itemID) {
 
-            // inc-1
+            // inc-1 ---> type-ID
             splitID = itemID.split('-');
             type = splitID[0];
-            ID = splitID[1];
+            ID = parseInt(splitID[1]);
 
             // 1. delete the item from the data structure (BudgetController)
+            budgetCtrl.deleteItem(type, ID);
+
             // 2. delete the item from the UI
+
             // 3. Update and show the new budget
         }
     };
