@@ -185,6 +185,13 @@ var UIController = (function() {
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
+        deleteListItem: function(selectorID) {
+            var el = document.getElementById(selectorID);
+
+            // Node.removeChild() method removes a child node from the DOM. Returns removed node.
+            el.parentNode.removeChild(el);
+        },
+
         clearFields: function() {
             var fields, fieldsArray;
 
@@ -286,7 +293,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         // we need this event parameter because we wanna know what is the target element that bubbles up and create the Event Delegation
        var itemID, splitID, type, ID;
         
-        // event.target: A reference to the object that dispatched the event
+        // event.target: A reference to the object that dispatched the event --> it bubbles up from the button to the id="income-0" DOM node
         itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if (itemID) {
@@ -300,8 +307,10 @@ var controller = (function(budgetCtrl, UICtrl) {
             budgetCtrl.deleteItem(type, ID);
 
             // 2. delete the item from the UI
+            UICtrl.deleteListItem(itemID);
 
             // 3. Update and show the new budget
+            updateBudget();
         }
     };
 
