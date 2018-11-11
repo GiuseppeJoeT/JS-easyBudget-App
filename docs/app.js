@@ -180,7 +180,8 @@ var UIController = (function() {
         incomeLabel: '.budget__income--value',
         expensesLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',
-        container: '.container'
+        container: '.container',
+        expensesPercLabel: '.item__percentage'
     }
 
     return { 
@@ -253,6 +254,29 @@ var UIController = (function() {
             
         },
 
+        displayPercentages: function(percentages) {
+            // the querySelectorAll() method returns a nodeList
+            var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
+
+            // We create our own ForEach method for nodeLists because there is not one built-in, there is just Array.prototype.forEach() 
+            var nodeListForEach = function(list, callback) {
+                for (var i = 0; i < list.length; i++) {
+                    callback(list[i], i);
+                }
+            };
+
+            nodeListForEach(fields, function(current, index) {
+                // if the percentage is greater than zero, show it
+                if (percentages[index] > 0) {
+                    // the current is expensesPercLabel, and so the '.item__percentage' DOM node
+                    current.textContent = percentages[index] + '%';
+                } else {
+                    current.textContent = '---';
+                }
+            })
+
+        },
+
         getDOMstrings: function() {
             return DOMstrings;
         }
@@ -302,7 +326,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         var percentages = budgetCtrl.getPercentages();
 
         // 3. Update the UI with the new percentages 
-        console.log(percentages);
+        UICtrl.displayPercentages(percentages);
     };
 
     var ctrlAddItem = function() {
@@ -358,7 +382,7 @@ var controller = (function(budgetCtrl, UICtrl) {
             updateBudget();
 
             // 4. calculate and update percentages
-             updatePercentages();
+            updatePercentages();
         }
     };
 
