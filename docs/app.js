@@ -185,6 +185,13 @@ var UIController = (function() {
         dateLabel: '.budget__title--month'
     }
 
+     // We create our own ForEach method for nodeLists
+     var nodeListForEach = function(list, callback) {
+        for (var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
+    };
+
     return { 
         getInputValue : function() {
             return {
@@ -258,14 +265,7 @@ var UIController = (function() {
         displayPercentages: function(percentages) {
             // the querySelectorAll() method returns a nodeList
             var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
-
-            // We create our own ForEach method for nodeLists because there is not one built-in, there is just Array.prototype.forEach() 
-            var nodeListForEach = function(list, callback) {
-                for (var i = 0; i < list.length; i++) {
-                    callback(list[i], i);
-                }
-            };
-
+        
             nodeListForEach(fields, function(current, index) {
                 // if the percentage is greater than zero, show it
                 if (percentages[index] > 0) {
@@ -288,6 +288,18 @@ var UIController = (function() {
             month = now.getMonth();
             year = now.getFullYear();
             document.querySelector(DOMstrings.dateLabel).textContent = months[month] + ' ' + year;
+        },
+
+        changedType: function() {
+
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue);
+
+                nodeListForEach(fields, function(cur) {
+                    cur.classList.toggle('red-focus');
+                });
         },
 
         getDOMstrings: function() {
@@ -318,6 +330,8 @@ var controller = (function(budgetCtrl, UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
     };
 
     var updateBudget = function() {
